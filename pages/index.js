@@ -1,9 +1,9 @@
-import { Network, Alchemy } from "alchemy-sdk";
-import { useEffect, useState } from "react";
-import { useAuth } from "../providers/AuthProvider";
+import { Network, Alchemy } from 'alchemy-sdk';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../providers/AuthProvider';
 
 const settings = {
-  apiKey: "rnzrc-FwbrpeWhaJ36Pjdg11zi3YwaIu", // Replace with your Alchemy API Key.
+  apiKey: 'RGTstijY3MSXs6GoZEGouh2rdw50n0DR', // Replace with your Alchemy API Key.
   network: Network.MATIC_MUMBAI, // Replace with your network.
 };
 
@@ -17,14 +17,14 @@ const NFTs = () => {
   useEffect(() => {
     getNFTsForContract();
     if (signed) {
-      console.log("user has signed...");
+      console.log('user has signed...');
     } else {
-      console.log("user has not signed...");
+      console.log('user has not signed...');
     }
   }, [pageKey, isLoading, signed]);
 
   const getNFTsForContract = async () => {
-    console.log("getNFTsForContract been called......");
+    console.log('getNFTsForContract been called......');
     if (!contractNFTs) {
       setIsLoading(true);
 
@@ -37,15 +37,23 @@ const NFTs = () => {
 
       // Print total NFT collection returned in the response:
       const response = await alchemy.nft.getNftsForContract(
-        "0xE1838873761d347867fA78981B5ee4395BC8409c",
+        '0xE1838873761d347867fA78981B5ee4395BC8409c',
         queryOptions
       );
+
+      // Print contract address and tokenId for each NFT:
+      for (const nft of response.nfts) {
+        console.log('===');
+        console.log('contract address:', nft.contract.address);
+        console.log('token ID:', nft.tokenId);
+      }
+      console.log('===');
 
       console.log(response);
       setIsLoading(false);
       setContractNFTs(response);
     } else {
-      console.log("contracts NFTs data already loaded.....");
+      console.log('contracts NFTs data already loaded.....');
     }
   };
 
@@ -71,28 +79,18 @@ const NFTs = () => {
       <div className="row row-cols-3">
         {contractNFTs && contractNFTs.nfts.length > 0 ? (
           contractNFTs.nfts.map(function (NFT, i) {
-            if (NFT.description.length > 0) {
-              return (
-                <div className="col" key={i}>
-                  <div className="cacrd" key={i}>
-                    <img
-                      src={NFT.rawMetadata.image.replace(
-                        "gateway.pinata.cloud",
-                        "ipfs.digi96.com"
-                      )}
-                      className="card-img-top"
-                    />
-                    <div className="card-body">
-                      <h5 className="card-title">{NFT.name}</h5>
-                      <p className="card-text">Token Id: {NFT.tokenId}</p>
-                      <p className="card-text text-truncate">
-                        {NFT.description}
-                      </p>
-                    </div>
+            return (
+              <div className="col" key={i}>
+                <div className="cacrd" key={i}>
+                  <img src={NFT.rawMetadata.image} className="card-img-top" />
+                  <div className="card-body">
+                    <h5 className="card-title">{NFT.name}</h5>
+                    <p className="card-text">Token Id: {NFT.tokenId}</p>
+                    <p className="card-text text-truncate">{NFT.description}</p>
                   </div>
                 </div>
-              );
-            }
+              </div>
+            );
           })
         ) : (
           <div></div>
